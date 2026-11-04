@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Stay Invoice & Billing - HotelEase</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            .card { border: none !important; box-shadow: none !important; }
+        }
+    </style>
+</head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+
+    <!-- Navbar Fragment -->
+    <div th:replace="~{fragments/navbar :: navbar}" class="no-print"></div>
+
+    <div class="container my-5 flex-grow-1">
+        <div class="d-flex justify-content-between align-items-center mb-4 no-print">
+            <a th:href="@{/reception/check-in-out}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Back to Front Desk</a>
+            <button onclick="window.print()" class="btn btn-dark btn-sm"><i class="bi bi-printer"></i> Print Invoice</button>
+        </div>
+
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show no-print" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show no-print" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Tax Invoice Card -->
+                <div class="card border-0 shadow-lg rounded-4 overflow-hidden bg-white p-5">
+                    
+                    <!-- Invoice Header -->
+                    <div class="d-flex justify-content-between align-items-start border-bottom pb-4 mb-4">
+                        <div>
+                            <h3 class="fw-bold text-warning mb-1"><i class="bi bi-building"></i> HotelEase</h3>
+                            <p class="text-muted small mb-0">Luxury Hotel & Hospitality Management</p>
+                            <p class="text-muted small mb-0">GSTIN: 27AABCH1234F1Z8</p>
+                        </div>
+                        <div class="text-end">
+                            <h4 class="fw-bold mb-0 text-dark">TAX INVOICE</h4>
+                            <span class="text-muted small">Invoice #: INV-2026-<span th:text="${bill.bookingId}">1</span></span>
+                            <div class="mt-2" th:if="${payment != null}">
+                                <span class="badge bg-success fs-6"><i class="bi bi-check-circle"></i> PAID</span>
+                            </div>
+                            <div class="mt-2" th:if="${payment == null}">
+                                <span class="badge bg-warning text-dark fs-6"><i class="bi bi-clock"></i> PENDING PAYMENT</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Guest & Stay Metadata -->
+                    <div class="row mb-4">
+                        <div class="col-sm-6">
+                            <h6 class="fw-bold text-uppercase text-muted small">Billed To:</h6>
+                            <h5 class="fw-bold mb-1" th:text="${bill.guestName}">Guest Name</h5>
+                            <p class="text-muted small mb-0" th:text="${bill.guestEmail}">guest@example.com</p>
+                        </div>
+                        <div class="col-sm-6 text-sm-end">
+                            <h6 class="fw-bold text-uppercase text-muted small">Stay Details:</h6>
+                            <div><strong>Room:</strong> #<span th:text="${bill.roomNumber}">101</span> (<span th:text="${bill.roomTypeName}">Deluxe</span>)</div>
+                            <div><strong>Duration:</strong> <span th:text="${bill.numberOfNights}">2</span> night(s)</div>
+                            <div th:if="${stayRecord != null and stayRecord.actualCheckIn != null}">
+                                <small class="text-muted">Checked in: <span th:text="${#temporals.format(stayRecord.actualCheckIn, 'dd MMM yyyy, HH:mm')}"></span></small>
+                            </div>
+                            <div th:if="${stayRecord != null and stayRecord.actualCheckOut != null}">
+                                <small class="text-muted">Checked out: <span th:text="${#temporals.format(stayRecord.actualCheckOut, 'dd MMM yyyy, HH:mm')}"></span></small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Itemized Charges Table -->
+                    <div class="table-responsive mb-4">
+                        <table class="table table-bordered align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Description</th>
+                                    <th class="text-center">Rate / Night</th>
+                                    <th class="text-center">Nights</th>
+                                    <th class="text-end">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <strong>Room Accommodation Charges</strong>
+                                        <small class="text-muted d-block" th:text="'Room #' + ${bill.roomNumber} + ' (' + ${bill.roomTypeName} + ')'"></small>
+                                    </td>
+                                    <td class="text-center">&#8377;<span th:text="${#numbers.formatDecimal(bill.pricePerNight, 0, 'COMMA', 2, 'POINT')}">2,500</span></td>
+                                    <td class="text-center" th:text="${bill.numberOfNights}">2</td>
+                                    <td class="text-end fw-semibold">&#8377;<span th:text="${#numbers.formatDecimal(bill.roomTariff, 0, 'COMMA', 2, 'POINT')}">5,000</span></td>
+                                </tr>
+                                <tr th:if="${bill.additionalCharges > 0}">
+                                    <td>
+                                        <strong>Incidental & Room Service Charges</strong>
+                                    </td>
+                                    <td class="text-center">-</td>
+                                    <td class="text-center">-</td>
+                                    <td class="text-end fw-semibold">&#8377;<span th:text="${#numbers.formatDecimal(bill.additionalCharges, 0, 'COMMA', 2, 'POINT')}">0</span></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="text-end fw-semibold">Subtotal</td>
+                                    <td class="text-end fw-semibold">&#8377;<span th:text="${#numbers.formatDecimal(bill.roomTariff + bill.additionalCharges, 0, 'COMMA', 2, 'POINT')}">5,000</span></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="text-end text-muted">Goods & Services Tax (GST 12%)</td>
+                                    <td class="text-end text-muted">&#8377;<span th:text="${#numbers.formatDecimal(bill.taxAmount, 0, 'COMMA', 2, 'POINT')}">600</span></td>
+                                </tr>
+                                <tr class="table-light">
+                                    <td colspan="3" class="text-end fw-bold fs-5">Grand Total Payable</td>
+                                    <td class="text-end fw-bold fs-5 text-success">&#8377;<span th:text="${#numbers.formatDecimal(bill.grandTotal, 0, 'COMMA', 2, 'POINT')}">5,600.00</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Payment Information Section -->
+                    <div th:if="${payment != null}" class="card bg-success-subtle border-0 p-3 rounded-3 mb-4">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h6 class="fw-bold text-success mb-1"><i class="bi bi-shield-check"></i> Payment Received</h6>
+                                <p class="small text-muted mb-0">Transaction Ref: <strong th:text="${payment.transactionReference}">TXN123</strong></p>
+                                <p class="small text-muted mb-0">Method: <strong th:text="${payment.paymentMethod}">UPI</strong> | Date: <span th:text="${#temporals.format(payment.paymentDate, 'dd MMM yyyy, HH:mm')}"></span></p>
+                            </div>
+                            <div class="col-md-4 text-md-end">
+                                <span class="h4 fw-bold text-success">&#8377;<span th:text="${#numbers.formatDecimal(payment.amount, 0, 'COMMA', 2, 'POINT')}">5,600</span></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Form if not paid yet -->
+                    <div th:if="${payment == null}" class="card bg-light border-0 p-4 rounded-3 mb-4 no-print">
+                        <h5 class="fw-bold mb-3"><i class="bi bi-credit-card-2-front"></i> Settle Bill / Process Payment</h5>
+                        <form th:action="@{/reception/pay}" method="post">
+                            <input type="hidden" name="bookingId" th:value="${bill.bookingId}">
+                            <input type="hidden" name="amount" th:value="${bill.grandTotal}">
+                            
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-semibold">Payment Mode</label>
+                                    <select name="paymentMethod" class="form-select" required>
+                                        <option th:each="m : ${paymentMethods}" th:value="${m}" th:text="${m}"></option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-semibold">Transaction Reference (Optional)</label>
+                                    <input type="text" name="transactionReference" placeholder="e.g. UPI Ref / Card Last 4 digits" class="form-control">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success fw-bold w-100 py-2">
+                                <i class="bi bi-check2-all"></i> Receive Payment of &#8377;<span th:text="${bill.grandTotal}"></span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="text-center text-muted small mt-4">
+                        Thank you for staying at HotelEase! For inquiries, email support@hotelease.com
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Fragment -->
+    <div th:replace="~{fragments/footer :: footer}" class="no-print"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

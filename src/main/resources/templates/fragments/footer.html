@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+<footer th:fragment="footer" class="bg-dark text-light py-4 mt-5 border-top border-secondary">
+    <div class="container text-center">
+        <div class="row">
+            <div class="col-md-4 mb-3 text-md-start">
+                <h5 class="text-warning">HotelEase</h5>
+                <p class="text-muted small">A modern hotel room booking & management platform built for guests, receptionists, and hotel administrators.</p>
+            </div>
+            <div class="col-md-4 mb-3">
+                <h6>Quick Links</h6>
+                <ul class="list-unstyled small">
+                    <li><a th:href="@{/}" class="text-light text-decoration-none">Home</a></li>
+                    <li><a th:href="@{/rooms}" class="text-light text-decoration-none">All Rooms</a></li>
+                    <li><a th:href="@{/login}" class="text-light text-decoration-none">Sign In</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4 mb-3 text-md-end">
+                <h6>Team 8 – HCL Java Training</h6>
+                <p class="text-muted small mb-0">Powered by Spring Boot 4, MySQL & Thymeleaf.</p>
+                <p class="text-muted small">&copy; 2026 HotelEase. All rights reserved.</p>
+            </div>
+        </div>
+    </div>
+</footer>
+</body>
+</html>

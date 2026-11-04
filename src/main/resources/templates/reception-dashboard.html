@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reception Desk - HotelEase</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+
+    <!-- Navbar Fragment -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container my-5 flex-grow-1">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold mb-1"><i class="bi bi-bell-fill text-warning"></i> Front Desk & Reception Desk</h2>
+                <p class="text-muted mb-0">Today's guest arrivals, departures, check-in, check-out and billing</p>
+            </div>
+            <a th:href="@{/reception/check-in-out}" class="btn btn-primary fw-semibold"><i class="bi bi-box-arrow-in-right"></i> Check-in / Check-out</a>
+        </div>
+
+        <!-- Metrics Row -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm p-3 rounded-4 bg-white">
+                    <span class="text-muted small fw-semibold">EXPECTED ARRIVALS</span>
+                    <h3 class="fw-bold text-primary mt-2 mb-0" th:text="${#lists.size(arrivals)}">0</h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm p-3 rounded-4 bg-white">
+                    <span class="text-muted small fw-semibold">EXPECTED DEPARTURES</span>
+                    <h3 class="fw-bold text-warning mt-2 mb-0" th:text="${#lists.size(departures)}">0</h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm p-3 rounded-4 bg-white">
+                    <span class="text-muted small fw-semibold">AVAILABLE ROOMS</span>
+                    <h3 class="fw-bold text-success mt-2 mb-0" th:text="${availableRooms}">0</h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm p-3 rounded-4 bg-white">
+                    <span class="text-muted small fw-semibold">OCCUPIED ROOMS</span>
+                    <h3 class="fw-bold text-danger mt-2 mb-0" th:text="${occupiedRooms}">0</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Today's Arrivals -->
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+            <div class="card-header bg-white py-3 border-0">
+                <h5 class="fw-bold mb-0 text-primary"><i class="bi bi-airplane-engines"></i> Today's Scheduled Arrivals (<span th:text="${today}"></span>)</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Booking #</th>
+                                <th>Guest Name</th>
+                                <th>Room</th>
+                                <th>Guests</th>
+                                <th>Status</th>
+                                <th class="text-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${#lists.isEmpty(arrivals)}">
+                                <td colspan="6" class="text-center py-3 text-muted">No scheduled arrivals for today.</td>
+                            </tr>
+                            <tr th:each="b : ${arrivals}">
+                                <td class="fw-bold" th:text="'#' + ${b.id}">#1</td>
+                                <td th:text="${b.user.fullName}">Guest</td>
+                                <td th:text="'Room ' + ${b.room.roomNumber}">Room 101</td>
+                                <td th:text="${b.numberOfGuests}">2</td>
+                                <td><span class="badge bg-primary" th:text="${b.bookingStatus}">CONFIRMED</span></td>
+                                <td class="text-end">
+                                    <form th:action="@{'/reception/check-in/' + ${b.id}}" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-success btn-sm"><i class="bi bi-check-lg"></i> Check-in</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Today's Departures -->
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="card-header bg-white py-3 border-0">
+                <h5 class="fw-bold mb-0 text-warning"><i class="bi bi-box-arrow-right"></i> Today's Scheduled Departures (<span th:text="${today}"></span>)</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Booking #</th>
+                                <th>Guest Name</th>
+                                <th>Room</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th class="text-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${#lists.isEmpty(departures)}">
+                                <td colspan="6" class="text-center py-3 text-muted">No scheduled departures for today.</td>
+                            </tr>
+                            <tr th:each="b : ${departures}">
+                                <td class="fw-bold" th:text="'#' + ${b.id}">#1</td>
+                                <td th:text="${b.user.fullName}">Guest</td>
+                                <td th:text="'Room ' + ${b.room.roomNumber}">Room 101</td>
+                                <td>&#8377;<span th:text="${b.totalAmount}">0</span></td>
+                                <td><span class="badge bg-warning text-dark" th:text="${b.bookingStatus}">CHECKED_IN</span></td>
+                                <td class="text-end">
+                                    <form th:action="@{'/reception/check-out/' + ${b.id}}" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-danger btn-sm"><i class="bi bi-box-arrow-right"></i> Check-out & Bill</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Fragment -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

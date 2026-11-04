@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - HotelEase</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+
+    <!-- Navbar Fragment -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container my-auto py-5 flex-grow-1 d-flex align-items-center justify-content-center">
+        <div class="col-md-5 col-lg-4">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="card-header bg-dark text-white text-center py-4">
+                    <h4 class="fw-bold mb-1 text-warning"><i class="bi bi-shield-lock-fill"></i> HotelEase</h4>
+                    <p class="text-white-50 small mb-0">Sign in to manage bookings & stays</p>
+                </div>
+                <div class="card-body p-4">
+
+                    <!-- Notification alerts -->
+                    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show small" role="alert">
+                        <i class="bi bi-exclamation-circle-fill me-1"></i> <span th:text="${errorMessage}"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    <div th:if="${logoutMessage}" class="alert alert-info alert-dismissible fade show small" role="alert">
+                        <i class="bi bi-info-circle-fill me-1"></i> <span th:text="${logoutMessage}"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show small" role="alert">
+                        <i class="bi bi-check-circle-fill me-1"></i> <span th:text="${successMessage}"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+
+                    <!-- Login Form -->
+                    <form th:action="@{/login}" method="post">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small">Email Address</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white"><i class="bi bi-envelope text-muted"></i></span>
+                                <input type="email" name="email" class="form-control" placeholder="name@example.com" required autofocus>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white"><i class="bi bi-key text-muted"></i></span>
+                                <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+                            </div>
+                        </div>
+
+                        <div class="d-grid mb-3 mt-4">
+                            <button type="submit" class="btn btn-warning py-2 fw-semibold">
+                                <i class="bi bi-box-arrow-in-right"></i> Sign In
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="card bg-light border-0 p-3 mb-3 small rounded-3">
+                        <div class="fw-bold mb-1 text-muted">Default Test Accounts:</div>
+                        <div><strong class="text-primary">Admin:</strong> admin@hotelease.com / admin123</div>
+                        <div><strong class="text-success">Reception:</strong> reception@hotelease.com / reception123</div>
+                        <div><strong class="text-info">Customer:</strong> customer@hotelease.com / customer123</div>
+                    </div>
+
+                    <div class="text-center small">
+                        <span class="text-muted">Don't have an account? </span>
+                        <a th:href="@{/register}" class="fw-semibold text-decoration-none">Register here</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Fragment -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
