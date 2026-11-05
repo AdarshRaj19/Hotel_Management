@@ -4,8 +4,8 @@
 <body>
 <footer th:fragment="footer" class="bg-dark text-light py-5 mt-auto border-top border-secondary border-opacity-25">
     <div class="container">
-        <div class="row g-4">
-            <div class="col-lg-4 col-md-6 text-center text-md-start">
+        <div class="row g-4 align-items-center">
+            <div class="col-md-8 text-center text-md-start">
                 <div class="d-flex align-items-center gap-2 mb-2 justify-content-center justify-content-md-start">
                     <i class="bi bi-building fs-4 text-warning"></i>
                     <h5 class="text-warning fw-bold mb-0">HotelEase</h5>
@@ -20,27 +20,7 @@
                 </div>
             </div>
 
-            <div class="col-lg-2 col-md-3 col-6">
-                <h6 class="text-white fw-bold mb-3 text-uppercase small letter-spacing-1">Guest Links</h6>
-                <ul class="list-unstyled small mb-0 d-flex flex-column gap-2">
-                    <li><a th:href="@{/}" class="text-white-50 text-decoration-none hover-white">Home</a></li>
-                    <li><a th:href="@{/rooms}" class="text-white-50 text-decoration-none hover-white">Explore Rooms</a></li>
-                    <li><a th:href="@{/login}" class="text-white-50 text-decoration-none hover-white">Sign In</a></li>
-                    <li><a th:href="@{/register}" class="text-white-50 text-decoration-none hover-white">Create Account</a></li>
-                </ul>
-            </div>
-
-            <div class="col-lg-2 col-md-3 col-6">
-                <h6 class="text-white fw-bold mb-3 text-uppercase small letter-spacing-1">Operations</h6>
-                <ul class="list-unstyled small mb-0 d-flex flex-column gap-2">
-                    <li><a th:href="@{/reception/dashboard}" class="text-white-50 text-decoration-none hover-white">Front Desk</a></li>
-                    <li><a th:href="@{/reception/check-in-out}" class="text-white-50 text-decoration-none hover-white">Check-in / Out</a></li>
-                    <li><a th:href="@{/admin/dashboard}" class="text-white-50 text-decoration-none hover-white">Admin Control</a></li>
-                    <li><a th:href="@{/admin/reports}" class="text-white-50 text-decoration-none hover-white">Analytics</a></li>
-                </ul>
-            </div>
-
-            <div class="col-lg-4 col-md-12 text-center text-lg-end">
+            <div class="col-md-4 text-center text-md-end">
                 <p class="text-white-50 small mb-0">&copy; 2026 HotelEase. All rights reserved.</p>
             </div>
         </div>
