@@ -337,22 +337,8 @@ f:/hotel-booking/
 
 **Team 8 — HCL Java Training**
 
-| Name | Role |
-|---|---|
-| Team Member 1 | Backend / Spring Boot |
-| Team Member 2 | Database / JPA |
-| Team Member 3 | Frontend / Thymeleaf |
-| Team Member 4 | Security / Testing |
+
 
 ---
 
-## Git Commit Guidelines
 
-```
-feat: add check-in queue with CustomCircularQueue DSA
-fix: correct DaoAuthenticationProvider constructor for Spring Boot 4
-test: add CheckInOutService unit tests with Mockito
-docs: update README with API reference
-```
-
-**Branch strategy:** `main` (production) · `develop` (integration) · `feature/*` (features)
