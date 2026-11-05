@@ -14,71 +14,71 @@
     <div th:replace="~{fragments/navbar :: navbar}"></div>
 
     <div class="container my-5 flex-grow-1">
-        <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
             <div>
                 <h2 class="fw-bold mb-1"><i class="bi bi-briefcase-fill text-warning"></i> My Reservations</h2>
                 <p class="text-muted mb-0">Track upcoming stays, vouchers, and reservation history</p>
             </div>
-            <a th:href="@{/rooms}" class="btn btn-warning fw-semibold"><i class="bi bi-plus-circle"></i> New Booking</a>
+            <a th:href="@{/rooms}" class="btn btn-warning fw-semibold shadow-sm"><i class="bi bi-plus-circle me-1"></i> New Booking</a>
         </div>
 
-        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
             <i class="bi bi-check-circle-fill me-2"></i> <span th:text="${successMessage}"></span>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
             <i class="bi bi-exclamation-triangle-fill me-2"></i> <span th:text="${errorMessage}"></span>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
 
-        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-dark">
                             <tr>
-                                <th>Booking #</th>
+                                <th class="ps-3">Booking #</th>
                                 <th>Room Details</th>
                                 <th>Check-in</th>
                                 <th>Check-out</th>
                                 <th>Guests</th>
                                 <th>Tariff</th>
                                 <th>Status</th>
-                                <th class="text-end">Actions</th>
+                                <th class="text-end pe-3">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr th:if="${#lists.isEmpty(bookings)}">
                                 <td colspan="8" class="text-center py-5 text-muted">
-                                    <i class="bi bi-calendar2-x display-4 d-block mb-3"></i>
-                                    <h5>No bookings found</h5>
+                                    <i class="bi bi-calendar2-x display-4 d-block mb-3 text-secondary"></i>
+                                    <h5 class="fw-bold">No bookings found</h5>
                                     <p class="small text-muted">You haven't reserved any rooms yet.</p>
-                                    <a th:href="@{/rooms}" class="btn btn-primary btn-sm">Find Rooms</a>
+                                    <a th:href="@{/rooms}" class="btn btn-primary btn-sm px-3 mt-1">Explore Available Rooms</a>
                                 </td>
                             </tr>
                             <tr th:each="b : ${bookings}">
-                                <td class="fw-bold" th:text="'#' + ${b.id}">#1</td>
+                                <td class="fw-bold ps-3" th:text="'#' + ${b.id}">#1</td>
                                 <td>
-                                    <strong th:text="'Room ' + ${b.room.roomNumber}">Room 101</strong>
-                                    <small class="text-muted d-block" th:text="${b.room.roomType.name}">Deluxe</small>
+                                    <strong class="text-dark" th:text="'Room ' + ${b.room.roomNumber}">Room 101</strong>
+                                    <span class="badge bg-secondary-subtle text-secondary small d-block" style="width: fit-content;" th:text="${b.room.roomType.name}">Deluxe</span>
                                 </td>
-                                <td th:text="${b.checkInDate}">2026-11-10</td>
-                                <td th:text="${b.checkOutDate}">2026-11-12</td>
-                                <td><i class="bi bi-people-fill text-muted"></i> <span th:text="${b.numberOfGuests}">2</span></td>
-                                <td class="fw-bold">&#8377;<span th:text="${#numbers.formatDecimal(b.totalAmount, 0, 'COMMA', 2, 'POINT')}">5,000</span></td>
+                                <td><i class="bi bi-calendar-event text-primary me-1"></i> <span th:text="${b.checkInDate}">2026-11-10</span></td>
+                                <td><i class="bi bi-calendar-event text-primary me-1"></i> <span th:text="${b.checkOutDate}">2026-11-12</span></td>
+                                <td><i class="bi bi-people-fill text-muted me-1"></i> <span th:text="${b.numberOfGuests}">2</span></td>
+                                <td class="fw-bold text-dark">&#8377;<span th:text="${#numbers.formatDecimal(b.totalAmount, 0, 'COMMA', 2, 'POINT')}">5,000</span></td>
                                 <td>
-                                    <span th:class="'badge ' + (${b.bookingStatus.name() == 'CONFIRMED'} ? 'bg-success' : (${b.bookingStatus.name() == 'CANCELLED'} ? 'bg-danger' : 'bg-primary'))"
+                                    <span th:class="'badge ' + (${b.bookingStatus.name() == 'CONFIRMED'} ? 'bg-primary' : (${b.bookingStatus.name() == 'CHECKED_IN'} ? 'bg-warning text-dark' : (${b.bookingStatus.name() == 'CHECKED_OUT'} ? 'bg-success' : 'bg-danger')))"
                                           th:text="${b.bookingStatus}">CONFIRMED</span>
                                 </td>
-                                <td class="text-end">
-                                    <a th:href="@{'/booking/' + ${b.id}}" class="btn btn-outline-primary btn-sm me-1">
-                                        <i class="bi bi-ticket-perforated"></i> Voucher
+                                <td class="text-end pe-3">
+                                    <a th:href="@{'/booking/' + ${b.id}}" class="btn btn-outline-primary btn-sm me-1" title="View Booking Voucher">
+                                        <i class="bi bi-ticket-perforated me-1"></i> Voucher
                                     </a>
                                     <form th:if="${b.bookingStatus.name() == 'CONFIRMED'}"
                                           th:action="@{'/booking/' + ${b.id} + '/cancel'}" method="post" class="d-inline"
                                           onsubmit="return confirm('Are you sure you want to cancel booking #' + [[${b.id}]] + '?');">
-                                        <button type="submit" class="btn btn-outline-danger btn-sm">
-                                            Cancel
+                                        <button type="submit" class="btn btn-outline-danger btn-sm" title="Cancel Reservation">
+                                            <i class="bi bi-x-circle me-1"></i> Cancel
                                         </button>
                                     </form>
                                 </td>

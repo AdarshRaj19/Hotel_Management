@@ -14,84 +14,104 @@
     <div th:replace="~{fragments/navbar :: navbar}"></div>
 
     <div class="container my-5 flex-grow-1">
-        <a th:href="@{/rooms}" class="btn btn-outline-secondary btn-sm mb-4"><i class="bi bi-arrow-left"></i> Back to Rooms</a>
+        <a th:href="@{/rooms}" class="btn btn-outline-secondary btn-sm mb-4"><i class="bi bi-arrow-left me-1"></i> Back to All Rooms</a>
 
         <div class="row g-4 justify-content-center">
             <div class="col-lg-8">
-                <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="card border-0 shadow-lg rounded-4 overflow-hidden bg-white">
                     <div class="card-header bg-dark text-white p-4">
-                        <h4 class="fw-bold mb-1 text-warning"><i class="bi bi-calendar2-check-fill"></i> Complete Your Room Reservation</h4>
-                        <p class="text-white-50 small mb-0">Select your dates and confirm your stay with immediate confirmation</p>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="p-3 bg-warning text-dark rounded-3 fs-3">
+                                <i class="bi bi-calendar2-check-fill"></i>
+                            </div>
+                            <div>
+                                <h4 class="fw-bold mb-1 text-warning">Complete Your Room Reservation</h4>
+                                <p class="text-white-50 small mb-0">Best Rate Guarantee &bull; Instant Confirmation</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-body p-4">
+                    <div class="card-body p-4 p-md-5">
 
-                        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
                             <i class="bi bi-exclamation-triangle-fill me-2"></i> <span th:text="${errorMessage}"></span>
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
 
-                        <form th:action="@{/booking/create}" th:object="${bookingRequest}" method="post">
+                        <form th:action="@{/booking/create}" th:object="${bookingRequest}" method="post" id="reservationForm">
                             
                             <!-- Selected Room Info -->
                             <div class="mb-4">
-                                <label class="form-label fw-bold">Select Room</label>
-                                <select th:field="*{roomId}" class="form-select" id="roomSelect" required>
+                                <label class="form-label fw-bold text-dark">Select Desired Room</label>
+                                <select th:field="*{roomId}" class="form-select form-select-lg" id="roomSelect" required>
                                     <option th:each="r : ${rooms}"
                                             th:value="${r.id}"
                                             th:data-price="${r.pricePerNight}"
                                             th:data-capacity="${r.capacity}"
-                                            th:text="'Room #' + ${r.roomNumber} + ' - ' + ${r.roomType.name} + ' (&#8377;' + ${r.pricePerNight} + ' / night - Max ' + ${r.capacity} + ' guests)'"
+                                            th:text="'Room #' + ${r.roomNumber} + ' - ' + ${r.roomType.name} + ' (&#8377;' + ${#numbers.formatDecimal(r.pricePerNight, 0, 'COMMA', 2, 'POINT')} + ' / night &bull; Max ' + ${r.capacity} + ' guests)'"
                                             th:selected="${selectedRoom != null and selectedRoom.id == r.id}">
                                     </option>
                                 </select>
+                                <div id="capacityHint" class="form-text text-muted small mt-1"></div>
                             </div>
 
                             <div class="row g-3 mb-4">
                                 <div class="col-md-6">
-                                    <label class="form-label fw-semibold"><i class="bi bi-calendar-event text-primary"></i> Check-in Date</label>
+                                    <label class="form-label fw-semibold text-dark"><i class="bi bi-calendar-event text-primary me-1"></i> Check-in Date</label>
                                     <input type="date" th:field="*{checkInDate}" id="checkInDate" class="form-control" required>
-                                    <div class="text-danger small" th:if="${#fields.hasErrors('checkInDate')}" th:errors="*{checkInDate}"></div>
+                                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('checkInDate')}" th:errors="*{checkInDate}"></div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label fw-semibold"><i class="bi bi-calendar-event-fill text-primary"></i> Check-out Date</label>
+                                    <label class="form-label fw-semibold text-dark"><i class="bi bi-calendar-event-fill text-primary me-1"></i> Check-out Date</label>
                                     <input type="date" th:field="*{checkOutDate}" id="checkOutDate" class="form-control" required>
-                                    <div class="text-danger small" th:if="${#fields.hasErrors('checkOutDate')}" th:errors="*{checkOutDate}"></div>
+                                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('checkOutDate')}" th:errors="*{checkOutDate}"></div>
                                 </div>
                             </div>
 
                             <div class="row g-3 mb-4">
                                 <div class="col-md-6">
-                                    <label class="form-label fw-semibold"><i class="bi bi-people text-primary"></i> Number of Guests</label>
-                                    <input type="number" th:field="*{numberOfGuests}" min="1" max="10" value="1" class="form-control" required>
-                                    <div class="text-danger small" th:if="${#fields.hasErrors('numberOfGuests')}" th:errors="*{numberOfGuests}"></div>
+                                    <label class="form-label fw-semibold text-dark"><i class="bi bi-people text-primary me-1"></i> Number of Guests</label>
+                                    <input type="number" th:field="*{numberOfGuests}" id="numberOfGuests" min="1" max="10" value="1" class="form-control" required>
+                                    <div id="guestWarning" class="text-danger small mt-1 d-none">
+                                        <i class="bi bi-exclamation-circle me-1"></i> Exceeds maximum room capacity!
+                                    </div>
+                                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('numberOfGuests')}" th:errors="*{numberOfGuests}"></div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label fw-semibold"><i class="bi bi-chat-left-dots text-primary"></i> Special Requests (Optional)</label>
-                                    <input type="text" th:field="*{specialRequests}" placeholder="e.g. Quiet room, late check-in" class="form-control">
+                                    <label class="form-label fw-semibold text-dark"><i class="bi bi-chat-left-dots text-primary me-1"></i> Special Requests (Optional)</label>
+                                    <input type="text" th:field="*{specialRequests}" placeholder="e.g. High floor, extra pillows" class="form-control">
                                 </div>
                             </div>
 
                             <!-- Live Tariff Estimation Box -->
-                            <div class="card bg-light border-0 p-3 mb-4 rounded-3">
-                                <h6 class="fw-bold mb-2">Estimated Tariff Breakdown</h6>
-                                <div class="d-flex justify-content-between small text-muted mb-1">
+                            <div class="card bg-light border-0 p-4 mb-4 rounded-4 shadow-sm">
+                                <h6 class="fw-bold mb-3 text-dark"><i class="bi bi-calculator text-warning me-2"></i>Estimated Tariff Breakdown</h6>
+                                
+                                <div class="d-flex justify-content-between small text-muted mb-2">
                                     <span>Rate per Night:</span>
-                                    <span id="rateLabel">&#8377;0.00</span>
+                                    <span id="rateLabel" class="fw-semibold text-dark">&#8377;0.00</span>
                                 </div>
-                                <div class="d-flex justify-content-between small text-muted mb-1">
-                                    <span>Duration:</span>
-                                    <span id="nightsLabel">0 nights</span>
+                                <div class="d-flex justify-content-between small text-muted mb-2">
+                                    <span>Stay Duration:</span>
+                                    <span id="nightsLabel" class="fw-semibold text-dark">0 nights</span>
+                                </div>
+                                <div class="d-flex justify-content-between small text-muted mb-2">
+                                    <span>Accommodation Subtotal:</span>
+                                    <span id="subtotalLabel" class="fw-semibold text-dark">&#8377;0.00</span>
+                                </div>
+                                <div class="d-flex justify-content-between small text-muted mb-2">
+                                    <span>Estimated GST (12%):</span>
+                                    <span id="taxLabel" class="fw-semibold text-dark">&#8377;0.00</span>
                                 </div>
                                 <hr class="my-2">
                                 <div class="d-flex justify-content-between fw-bold fs-5 text-dark">
-                                    <span>Total Payable:</span>
+                                    <span>Estimated Total Payable:</span>
                                     <span class="text-success" id="totalLabel">&#8377;0.00</span>
                                 </div>
                             </div>
 
                             <div class="d-grid">
-                                <button type="submit" class="btn btn-warning btn-lg fw-bold py-3">
-                                    <i class="bi bi-check2-circle"></i> Confirm & Book Reservation
+                                <button type="submit" id="submitBookingBtn" class="btn btn-warning btn-lg fw-bold py-3 shadow-sm">
+                                    <i class="bi bi-check2-circle me-2"></i> Confirm & Book Reservation
                                 </button>
                             </div>
                         </form>
@@ -108,12 +128,37 @@
     <script>
         function updateTariff() {
             const roomSelect = document.getElementById('roomSelect');
-            const checkIn = document.getElementById('checkInDate').value;
-            const checkOut = document.getElementById('checkOutDate').value;
-            const selectedOption = roomSelect.options[roomSelect.selectedIndex];
-            const price = selectedOption ? parseFloat(selectedOption.getAttribute('data-price')) : 0;
+            const checkInInput = document.getElementById('checkInDate');
+            const checkOutInput = document.getElementById('checkOutDate');
+            const guestInput = document.getElementById('numberOfGuests');
+            const guestWarning = document.getElementById('guestWarning');
+            const submitBtn = document.getElementById('submitBookingBtn');
+            const capacityHint = document.getElementById('capacityHint');
 
-            document.getElementById('rateLabel').innerText = '₹' + price.toLocaleString('en-IN');
+            const selectedOption = roomSelect.options[roomSelect.selectedIndex];
+            const price = selectedOption ? parseFloat(selectedOption.getAttribute('data-price')) || 0 : 0;
+            const maxCap = selectedOption ? parseInt(selectedOption.getAttribute('data-capacity'), 10) || 2 : 2;
+
+            if (capacityHint) {
+                capacityHint.innerHTML = `<i class="bi bi-info-circle me-1"></i> Room accommodates up to <strong>${maxCap}</strong> guests.`;
+            }
+
+            // Check guest count vs capacity
+            const guests = parseInt(guestInput.value, 10) || 1;
+            if (guests > maxCap) {
+                guestWarning.classList.remove('d-none');
+                guestWarning.innerHTML = `<i class="bi bi-exclamation-circle me-1"></i> Room accommodates max ${maxCap} guests.`;
+                submitBtn.disabled = true;
+                return;
+            } else {
+                guestWarning.classList.add('d-none');
+                submitBtn.disabled = false;
+            }
+
+            document.getElementById('rateLabel').innerText = '₹' + price.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+            const checkIn = checkInInput.value;
+            const checkOut = checkOutInput.value;
 
             if (checkIn && checkOut) {
                 const d1 = new Date(checkIn);
@@ -123,19 +168,62 @@
 
                 if (diffDays > 0) {
                     document.getElementById('nightsLabel').innerText = diffDays + ' night' + (diffDays > 1 ? 's' : '');
-                    const total = diffDays * price;
-                    document.getElementById('totalLabel').innerText = '₹' + total.toLocaleString('en-IN');
+                    const subtotal = diffDays * price;
+                    const tax = subtotal * 0.12;
+                    const total = subtotal + tax;
+
+                    document.getElementById('subtotalLabel').innerText = '₹' + subtotal.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                    document.getElementById('taxLabel').innerText = '₹' + tax.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                    document.getElementById('totalLabel').innerText = '₹' + total.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                    submitBtn.disabled = false;
                     return;
                 }
             }
             document.getElementById('nightsLabel').innerText = '0 nights';
+            document.getElementById('subtotalLabel').innerText = '₹0.00';
+            document.getElementById('taxLabel').innerText = '₹0.00';
             document.getElementById('totalLabel').innerText = '₹0.00';
         }
 
-        document.getElementById('roomSelect').addEventListener('change', updateTariff);
-        document.getElementById('checkInDate').addEventListener('change', updateTariff);
-        document.getElementById('checkOutDate').addEventListener('change', updateTariff);
-        window.addEventListener('DOMContentLoaded', updateTariff);
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            const checkInInput = document.getElementById('checkInDate');
+            const checkOutInput = document.getElementById('checkOutDate');
+
+            // Default min to today
+            checkInInput.min = today;
+            if (!checkInInput.value) {
+                checkInInput.value = today;
+            }
+
+            // Set checkout default to tomorrow
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const tomorrowStr = tomorrow.toISOString().split('T')[0];
+            checkOutInput.min = tomorrowStr;
+            if (!checkOutInput.value) {
+                checkOutInput.value = tomorrowStr;
+            }
+
+            checkInInput.addEventListener('change', function() {
+                if (this.value) {
+                    const nextDay = new Date(this.value);
+                    nextDay.setDate(nextDay.getDate() + 1);
+                    const nextDayStr = nextDay.toISOString().split('T')[0];
+                    checkOutInput.min = nextDayStr;
+                    if (!checkOutInput.value || checkOutInput.value <= this.value) {
+                        checkOutInput.value = nextDayStr;
+                    }
+                }
+                updateTariff();
+            });
+
+            checkOutInput.addEventListener('change', updateTariff);
+            document.getElementById('roomSelect').addEventListener('change', updateTariff);
+            document.getElementById('numberOfGuests').addEventListener('input', updateTariff);
+
+            updateTariff();
+        });
     </script>
 </body>
 </html>

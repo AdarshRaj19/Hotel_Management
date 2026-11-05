@@ -16,70 +16,156 @@
     <!-- Hero Section -->
     <header class="hero-section text-white text-center py-5">
         <div class="container py-5">
-            <h1 class="display-4 fw-bold">Experience Unmatched Luxury & Comfort</h1>
-            <p class="lead mb-4">Book your dream stay at HotelEase with effortless reservations, best tariffs, and premium amenities.</p>
-            <a th:href="@{/rooms}" class="btn btn-warning btn-lg px-4 me-2"><i class="bi bi-search"></i> Browse All Rooms</a>
-            <a th:href="@{/register}" class="btn btn-outline-light btn-lg px-4"><i class="bi bi-person-plus"></i> Join Us</a>
+            <span class="badge bg-warning text-dark px-3 py-2 fw-bold text-uppercase mb-3 shadow-sm">
+                <i class="bi bi-star-fill me-1"></i> 5-Star Luxury Hospitality
+            </span>
+            <h1 class="display-3 fw-bold mb-3">Experience Unmatched Luxury & Comfort</h1>
+            <p class="lead mb-4 mx-auto text-light opacity-90" style="max-width: 750px;">
+                Reserve your bespoke stay at HotelEase with effortless reservations, best tariffs, instant confirmation, and 24/7 front-desk hospitality.
+            </p>
+            <div class="d-flex justify-content-center gap-3">
+                <a th:href="@{/rooms}" class="btn btn-warning btn-lg px-4 fw-semibold shadow"><i class="bi bi-search me-1"></i> Browse All Rooms</a>
+                <a th:href="@{/register}" class="btn btn-outline-light btn-lg px-4"><i class="bi bi-person-plus me-1"></i> Join HotelEase</a>
+            </div>
         </div>
     </header>
 
     <!-- Quick Booking Bar -->
-    <div class="container mt-n5 mb-5">
-        <div class="card shadow-lg p-4 border-0 rounded-4">
-            <form th:action="@{/rooms}" method="get" class="row g-3 align-items-end">
+    <div class="container mt-n5 mb-5 position-relative" style="z-index: 10;">
+        <div class="card shadow-lg p-4 p-md-5 border-0 rounded-4 bg-white">
+            <form th:action="@{/rooms}" method="get" class="row g-3 align-items-end" id="quickSearchForm">
                 <div class="col-md-3">
-                    <label class="form-label fw-semibold"><i class="bi bi-calendar-check text-primary"></i> Check-in Date</label>
-                    <input type="date" name="checkInDate" class="form-control" required>
+                    <label class="form-label fw-semibold text-dark small mb-1"><i class="bi bi-calendar-check text-primary me-1"></i> Check-in Date</label>
+                    <input type="date" name="checkInDate" id="heroCheckIn" class="form-control" required>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label fw-semibold"><i class="bi bi-calendar-x text-primary"></i> Check-out Date</label>
-                    <input type="date" name="checkOutDate" class="form-control" required>
+                    <label class="form-label fw-semibold text-dark small mb-1"><i class="bi bi-calendar-x text-primary me-1"></i> Check-out Date</label>
+                    <input type="date" name="checkOutDate" id="heroCheckOut" class="form-control" required>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label fw-semibold"><i class="bi bi-people text-primary"></i> Guests</label>
+                    <label class="form-label fw-semibold text-dark small mb-1"><i class="bi bi-people text-primary me-1"></i> Guests</label>
                     <select name="capacity" class="form-select">
-                        <option value="">Any Guests</option>
+                        <option value="">Any Capacity</option>
                         <option value="1">1 Guest</option>
-                        <option value="2">2 Guests</option>
+                        <option value="2" selected>2 Guests</option>
                         <option value="3">3 Guests</option>
                         <option value="4">4+ Guests</option>
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
-                        <i class="bi bi-search"></i> Check Availability
+                    <button type="submit" class="btn btn-warning w-100 py-2 fw-bold text-dark shadow-sm">
+                        <i class="bi bi-search me-1"></i> Check Availability
                     </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Feature Highlights -->
+    <!-- Room Categories Showcase -->
     <div class="container my-5">
+        <div class="text-center mb-5">
+            <span class="text-warning fw-bold text-uppercase small letter-spacing-1">Handpicked Suites</span>
+            <h2 class="fw-bold mt-1">Our Featured Accommodations</h2>
+            <p class="text-muted">Designed for business travelers, couples, and family luxury getaways.</p>
+        </div>
+        <div class="row g-4">
+            <!-- Single Room -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm room-card overflow-hidden bg-white">
+                    <div class="room-image-container">
+                        <img src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=600&q=80" alt="Single Room">
+                        <div class="room-image-badge"><span class="badge bg-dark bg-opacity-75 text-warning border border-warning">Single</span></div>
+                    </div>
+                    <div class="card-body p-4 d-flex flex-column">
+                        <h5 class="fw-bold text-dark mb-1">Single Room</h5>
+                        <p class="text-muted small flex-grow-1">Cozy retreat with high-speed Wi-Fi, work desk, and ensuite bath.</p>
+                        <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
+                            <span class="text-muted small">From &#8377;1,500/nt</span>
+                            <a th:href="@{/rooms}" class="btn btn-outline-dark btn-sm">Explore &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Double Room -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm room-card overflow-hidden bg-white">
+                    <div class="room-image-container">
+                        <img src="https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=600&q=80" alt="Double Room">
+                        <div class="room-image-badge"><span class="badge bg-dark bg-opacity-75 text-warning border border-warning">Double</span></div>
+                    </div>
+                    <div class="card-body p-4 d-flex flex-column">
+                        <h5 class="fw-bold text-dark mb-1">Double Room</h5>
+                        <p class="text-muted small flex-grow-1">Spacious king bed, flat-screen 4K TV, minibar, and skyline views.</p>
+                        <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
+                            <span class="text-muted small">From &#8377;2,500/nt</span>
+                            <a th:href="@{/rooms}" class="btn btn-outline-dark btn-sm">Explore &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Deluxe Suite -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm room-card overflow-hidden bg-white">
+                    <div class="room-image-container">
+                        <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=600&q=80" alt="Deluxe Suite">
+                        <div class="room-image-badge"><span class="badge bg-dark bg-opacity-75 text-warning border border-warning">Deluxe</span></div>
+                    </div>
+                    <div class="card-body p-4 d-flex flex-column">
+                        <h5 class="fw-bold text-dark mb-1">Deluxe Suite</h5>
+                        <p class="text-muted small flex-grow-1">Lounge seating, jacuzzi tub, panoramic balcony, and premier amenities.</p>
+                        <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
+                            <span class="text-muted small">From &#8377;4,500/nt</span>
+                            <a th:href="@{/rooms}" class="btn btn-outline-dark btn-sm">Explore &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Presidential Suite -->
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm room-card overflow-hidden bg-white">
+                    <div class="room-image-container">
+                        <img src="https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=600&q=80" alt="Presidential Suite">
+                        <div class="room-image-badge"><span class="badge bg-dark bg-opacity-75 text-warning border border-warning">Presidential</span></div>
+                    </div>
+                    <div class="card-body p-4 d-flex flex-column">
+                        <h5 class="fw-bold text-dark mb-1">Presidential Suite</h5>
+                        <p class="text-muted small flex-grow-1">Top-floor penthouse with private terrace, hot tub, and dedicated butler.</p>
+                        <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
+                            <span class="text-muted small">From &#8377;8,000/nt</span>
+                            <a th:href="@{/rooms}" class="btn btn-outline-dark btn-sm">Explore &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feature Highlights -->
+    <div class="container my-5 pb-4">
         <div class="text-center mb-5">
             <h2 class="fw-bold">Why Choose HotelEase?</h2>
             <p class="text-muted">Designed for convenience, safety, and unmatched hospitality.</p>
         </div>
         <div class="row g-4 text-center">
             <div class="col-md-4">
-                <div class="card border-0 shadow-sm p-4 h-100 rounded-3">
+                <div class="card border-0 shadow-sm p-4 h-100 rounded-4 bg-white">
                     <div class="display-5 text-warning mb-3"><i class="bi bi-shield-check"></i></div>
-                    <h5 class="fw-bold">Instant Confirmation</h5>
-                    <p class="text-muted">Real-time availability checking prevents double bookings and guarantees your room reservation instantly.</p>
+                    <h5 class="fw-bold">Instant Real-Time Confirmation</h5>
+                    <p class="text-muted small">Overlapping reservation detection guarantees your room without double bookings or waiting periods.</p>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="card border-0 shadow-sm p-4 h-100 rounded-3">
+                <div class="card border-0 shadow-sm p-4 h-100 rounded-4 bg-white">
                     <div class="display-5 text-primary mb-3"><i class="bi bi-clock-history"></i></div>
-                    <h5 class="fw-bold">Express Check-in & Out</h5>
-                    <p class="text-muted">Streamlined reception desk workflows allow fast check-in, departure tracking, and automated bill computation.</p>
+                    <h5 class="fw-bold">Circular Queue Express Desk</h5>
+                    <p class="text-muted small">Our high-speed custom circular queue architecture serves arriving guests seamlessly with rapid check-in.</p>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="card border-0 shadow-sm p-4 h-100 rounded-3">
-                    <div class="display-5 text-success mb-3"><i class="bi bi-cash-coin"></i></div>
-                    <h5 class="fw-bold">Transparent Billing</h5>
-                    <p class="text-muted">No hidden fees. Transparent tariff calculation by night, real-time GST tax breakdown, and multiple payment methods.</p>
+                <div class="card border-0 shadow-sm p-4 h-100 rounded-4 bg-white">
+                    <div class="display-5 text-success mb-3"><i class="bi bi-receipt-cutoff"></i></div>
+                    <h5 class="fw-bold">Transparent Billing & GST</h5>
+                    <p class="text-muted small">Itemized tax invoices with 12% GST breakdown, multiple payment methods (UPI, Cards, Cash), and immediate receipts.</p>
                 </div>
             </div>
         </div>
@@ -89,5 +175,35 @@
     <div th:replace="~{fragments/footer :: footer}"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            const checkInInput = document.getElementById('heroCheckIn');
+            const checkOutInput = document.getElementById('heroCheckOut');
+
+            if (checkInInput && checkOutInput) {
+                checkInInput.min = today;
+                checkInInput.value = today;
+
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                const tomorrowStr = tomorrow.toISOString().split('T')[0];
+                checkOutInput.min = tomorrowStr;
+                checkOutInput.value = tomorrowStr;
+
+                checkInInput.addEventListener('change', function() {
+                    if (this.value) {
+                        const nextDay = new Date(this.value);
+                        nextDay.setDate(nextDay.getDate() + 1);
+                        const nextDayStr = nextDay.toISOString().split('T')[0];
+                        checkOutInput.min = nextDayStr;
+                        if (!checkOutInput.value || checkOutInput.value <= this.value) {
+                            checkOutInput.value = nextDayStr;
+                        }
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

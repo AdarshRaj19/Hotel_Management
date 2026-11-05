@@ -14,18 +14,18 @@
     <div th:replace="~{fragments/navbar :: navbar}"></div>
 
     <div class="container my-5 flex-grow-1">
-        <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
             <div>
-                <h2 class="fw-bold mb-1">Welcome, <span th:text="${user != null ? user.fullName : 'Guest'}">Guest</span>!</h2>
-                <p class="text-muted mb-0">Manage your reservations, view booking history, and explore luxury rooms</p>
+                <h2 class="fw-bold mb-1">Welcome, <span class="text-warning" th:text="${user != null ? user.fullName : 'Guest'}">Guest</span>!</h2>
+                <p class="text-muted mb-0">Manage your reservations, view booking vouchers, and explore luxury suites</p>
             </div>
-            <a th:href="@{/rooms}" class="btn btn-warning fw-semibold"><i class="bi bi-search"></i> Book a Room</a>
+            <a th:href="@{/rooms}" class="btn btn-warning fw-semibold shadow-sm"><i class="bi bi-search me-1"></i> Book a Room</a>
         </div>
 
         <!-- Metrics Row -->
         <div class="row g-4 mb-5">
             <div class="col-md-4">
-                <div class="card border-0 shadow-sm p-4 rounded-4 bg-white">
+                <div class="card border-0 shadow-sm p-4 rounded-4 bg-white h-100">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <span class="text-muted small fw-semibold text-uppercase">Total Bookings</span>
@@ -36,18 +36,18 @@
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="card border-0 shadow-sm p-4 rounded-4 bg-white">
+                <div class="card border-0 shadow-sm p-4 rounded-4 bg-white h-100">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <span class="text-muted small fw-semibold text-uppercase">Member Status</span>
-                            <h2 class="fw-bold text-success mt-2 mb-0">Active</h2>
+                            <h2 class="fw-bold text-success mt-2 mb-0">Active Guest</h2>
                         </div>
                         <div class="display-5 text-success"><i class="bi bi-patch-check"></i></div>
                     </div>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="card border-0 shadow-sm p-4 rounded-4 bg-white">
+                <div class="card border-0 shadow-sm p-4 rounded-4 bg-white h-100">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <span class="text-muted small fw-semibold text-uppercase">Registered Email</span>
@@ -60,49 +60,51 @@
         </div>
 
         <!-- Recent Reservations -->
-        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
             <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
-                <h5 class="fw-bold mb-0">My Reservations</h5>
-                <a th:href="@{/rooms}" class="btn btn-outline-primary btn-sm">Find Rooms</a>
+                <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-clock-history text-primary me-2"></i>My Reservations</h5>
+                <a th:href="@{/rooms}" class="btn btn-outline-primary btn-sm">Find More Rooms</a>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Booking ID</th>
+                                <th class="ps-3">Booking ID</th>
                                 <th>Room</th>
-                                <th>Dates</th>
+                                <th>Stay Dates</th>
                                 <th>Guests</th>
                                 <th>Total Tariff</th>
                                 <th>Status</th>
-                                <th class="text-end">Action</th>
+                                <th class="text-end pe-3">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr th:if="${#lists.isEmpty(bookings)}">
-                                <td colspan="7" class="text-center py-4 text-muted">
-                                    <i class="bi bi-journal-x fs-3 d-block mb-2"></i>
+                                <td colspan="7" class="text-center py-5 text-muted">
+                                    <i class="bi bi-journal-x fs-2 d-block mb-2 text-secondary"></i>
                                     You don't have any reservations yet.
                                 </td>
                             </tr>
                             <tr th:each="booking : ${bookings}">
-                                <td class="fw-bold" th:text="'#' + ${booking.id}">#1</td>
+                                <td class="fw-bold ps-3" th:text="'#' + ${booking.id}">#1</td>
                                 <td>
-                                    <span class="fw-semibold" th:text="'Room ' + ${booking.room.roomNumber}">Room 101</span>
+                                    <span class="fw-semibold text-dark" th:text="'Room ' + ${booking.room.roomNumber}">Room 101</span>
                                     <small class="text-muted d-block" th:text="${booking.room.roomType.name}">Deluxe</small>
                                 </td>
                                 <td>
                                     <span th:text="${booking.checkInDate}">2026-11-10</span> to <span th:text="${booking.checkOutDate}">2026-11-12</span>
                                 </td>
-                                <td><i class="bi bi-people-fill text-muted"></i> <span th:text="${booking.numberOfGuests}">2</span></td>
-                                <td class="fw-bold">&#8377;<span th:text="${#numbers.formatDecimal(booking.totalAmount, 0, 'COMMA', 2, 'POINT')}">5,000</span></td>
+                                <td><i class="bi bi-people-fill text-muted me-1"></i> <span th:text="${booking.numberOfGuests}">2</span></td>
+                                <td class="fw-bold text-dark">&#8377;<span th:text="${#numbers.formatDecimal(booking.totalAmount, 0, 'COMMA', 2, 'POINT')}">5,000</span></td>
                                 <td>
-                                    <span th:class="'badge ' + (${booking.bookingStatus.name() == 'CONFIRMED'} ? 'bg-success' : (${booking.bookingStatus.name() == 'CANCELLED'} ? 'bg-danger' : 'bg-primary'))"
+                                    <span th:class="'badge ' + (${booking.bookingStatus.name() == 'CONFIRMED'} ? 'bg-primary' : (${booking.bookingStatus.name() == 'CHECKED_IN'} ? 'bg-warning text-dark' : (${booking.bookingStatus.name() == 'CHECKED_OUT'} ? 'bg-success' : 'bg-danger')))"
                                           th:text="${booking.bookingStatus}">CONFIRMED</span>
                                 </td>
-                                <td class="text-end">
-                                    <a th:href="@{'/booking/' + ${booking.id}}" class="btn btn-outline-secondary btn-sm">Details</a>
+                                <td class="text-end pe-3">
+                                    <a th:href="@{'/booking/' + ${booking.id}}" class="btn btn-outline-primary btn-sm">
+                                        <i class="bi bi-ticket-perforated me-1"></i> Voucher
+                                    </a>
                                 </td>
                             </tr>
                         </tbody>

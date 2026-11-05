@@ -14,62 +14,80 @@
     <div th:replace="~{fragments/navbar :: navbar}"></div>
 
     <div class="container my-auto py-5 flex-grow-1 d-flex align-items-center justify-content-center">
-        <div class="col-md-5 col-lg-4">
-            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+        <div class="col-md-6 col-lg-5">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden bg-white">
                 <div class="card-header bg-dark text-white text-center py-4">
-                    <h4 class="fw-bold mb-1 text-warning"><i class="bi bi-shield-lock-fill"></i> HotelEase</h4>
+                    <div class="d-inline-flex p-3 bg-warning text-dark rounded-circle mb-2">
+                        <i class="bi bi-shield-lock-fill fs-3"></i>
+                    </div>
+                    <h4 class="fw-bold mb-1 text-warning">Welcome to HotelEase</h4>
                     <p class="text-white-50 small mb-0">Sign in to manage bookings & stays</p>
                 </div>
-                <div class="card-body p-4">
+                <div class="card-body p-4 p-md-5">
 
                     <!-- Notification alerts -->
-                    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show small" role="alert">
+                    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show small shadow-sm" role="alert">
                         <i class="bi bi-exclamation-circle-fill me-1"></i> <span th:text="${errorMessage}"></span>
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
-                    <div th:if="${logoutMessage}" class="alert alert-info alert-dismissible fade show small" role="alert">
+                    <div th:if="${logoutMessage}" class="alert alert-info alert-dismissible fade show small shadow-sm" role="alert">
                         <i class="bi bi-info-circle-fill me-1"></i> <span th:text="${logoutMessage}"></span>
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
-                    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show small" role="alert">
+                    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show small shadow-sm" role="alert">
                         <i class="bi bi-check-circle-fill me-1"></i> <span th:text="${successMessage}"></span>
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
 
                     <!-- Login Form -->
-                    <form th:action="@{/login}" method="post">
+                    <form th:action="@{/login}" method="post" id="loginForm">
                         <div class="mb-3">
-                            <label class="form-label fw-semibold small">Email Address</label>
+                            <label class="form-label fw-semibold small text-dark">Email Address</label>
                             <div class="input-group">
-                                <span class="input-group-text bg-white"><i class="bi bi-envelope text-muted"></i></span>
-                                <input type="email" name="email" class="form-control" placeholder="name@example.com" required autofocus>
+                                <span class="input-group-text bg-light"><i class="bi bi-envelope text-muted"></i></span>
+                                <input type="email" id="emailInput" name="email" class="form-control" placeholder="name@example.com" required autofocus>
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-semibold small">Password</label>
+                            <label class="form-label fw-semibold small text-dark">Password</label>
                             <div class="input-group">
-                                <span class="input-group-text bg-white"><i class="bi bi-key text-muted"></i></span>
-                                <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+                                <span class="input-group-text bg-light"><i class="bi bi-key text-muted"></i></span>
+                                <input type="password" id="passwordInput" name="password" class="form-control" placeholder="••••••••" required>
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                    <i class="bi bi-eye" id="toggleIcon"></i>
+                                </button>
                             </div>
                         </div>
 
                         <div class="d-grid mb-3 mt-4">
-                            <button type="submit" class="btn btn-warning py-2 fw-semibold">
-                                <i class="bi bi-box-arrow-in-right"></i> Sign In
+                            <button type="submit" class="btn btn-warning py-2 fw-bold text-dark shadow-sm">
+                                <i class="bi bi-box-arrow-in-right me-1"></i> Sign In
                             </button>
                         </div>
                     </form>
 
+                    <!-- Quick Demo / Grading Accounts Fill Bar -->
                     <div class="card bg-light border-0 p-3 mb-3 small rounded-3">
-                        <div class="fw-bold mb-1 text-muted">Default Test Accounts:</div>
-                        <div><strong class="text-primary">Admin:</strong> admin@hotelease.com / admin123</div>
-                        <div><strong class="text-success">Reception:</strong> reception@hotelease.com / reception123</div>
-                        <div><strong class="text-info">Customer:</strong> customer@hotelease.com / customer123</div>
+                        <div class="fw-bold mb-2 text-dark d-flex justify-content-between align-items-center">
+                            <span><i class="bi bi-person-badge text-warning me-1"></i> Demo Test Accounts:</span>
+                            <span class="text-muted" style="font-size: 0.75rem;">Click to Auto-fill</span>
+                        </div>
+                        <div class="d-flex flex-wrap gap-1">
+                            <button type="button" class="btn btn-sm btn-outline-primary flex-fill" onclick="fillCreds('admin@hotelease.com', 'admin123')">
+                                <i class="bi bi-shield-lock me-1"></i> Admin
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-success flex-fill" onclick="fillCreds('reception@hotelease.com', 'reception123')">
+                                <i class="bi bi-bell me-1"></i> Reception
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-warning text-dark flex-fill" onclick="fillCreds('customer@hotelease.com', 'customer123')">
+                                <i class="bi bi-person me-1"></i> Customer
+                            </button>
+                        </div>
                     </div>
 
                     <div class="text-center small">
                         <span class="text-muted">Don't have an account? </span>
-                        <a th:href="@{/register}" class="fw-semibold text-decoration-none">Register here</a>
+                        <a th:href="@{/register}" class="fw-semibold text-warning text-decoration-none">Register here</a>
                     </div>
                 </div>
             </div>
@@ -80,5 +98,25 @@
     <div th:replace="~{fragments/footer :: footer}"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function fillCreds(email, pass) {
+            document.getElementById('emailInput').value = email;
+            document.getElementById('passwordInput').value = pass;
+        }
+
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passInput = document.getElementById('passwordInput');
+            const icon = document.getElementById('toggleIcon');
+            if (passInput.type === 'password') {
+                passInput.type = 'text';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            } else {
+                passInput.type = 'password';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            }
+        });
+    </script>
 </body>
 </html>

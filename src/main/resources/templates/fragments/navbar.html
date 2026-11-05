@@ -2,49 +2,94 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head></head>
 <body>
-<nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
+<nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm py-2">
     <div class="container">
-        <a class="navbar-brand fw-bold text-warning" th:href="@{/}">
-            <i class="bi bi-building"></i> HotelEase
+        <a class="navbar-brand fw-bold text-warning d-flex align-items-center gap-2" th:href="@{/}">
+            <i class="bi bi-building fs-4"></i>
+            <span>HotelEase</span>
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/}">Home</a>
+                    <a class="nav-link" th:href="@{/}"><i class="bi bi-house me-1"></i> Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/rooms}">Explore Rooms</a>
+                    <a class="nav-link" th:href="@{/rooms}"><i class="bi bi-door-open me-1"></i> Explore Rooms</a>
                 </li>
-                <li class="nav-item" sec:authorize="hasRole('ADMIN')">
-                    <a class="nav-link text-info" th:href="@{/admin/rooms}">Manage Rooms</a>
+
+                <!-- Customer Navigation -->
+                <li class="nav-item" sec:authorize="hasRole('CUSTOMER')">
+                    <a class="nav-link text-warning" th:href="@{/customer/dashboard}"><i class="bi bi-speedometer2 me-1"></i> My Dashboard</a>
                 </li>
-                <li class="nav-item" sec:authorize="hasRole('ADMIN')">
-                    <a class="nav-link text-info" th:href="@{/admin/dashboard}">Admin Dashboard</a>
+                <li class="nav-item" sec:authorize="hasRole('CUSTOMER')">
+                    <a class="nav-link" th:href="@{/my-bookings}"><i class="bi bi-briefcase me-1"></i> My Bookings</a>
                 </li>
-                <li class="nav-item" sec:authorize="hasAnyRole('RECEPTION', 'ADMIN')">
-                    <a class="nav-link text-success" th:href="@{/reception/dashboard}">Reception</a>
+
+                <!-- Reception Navigation -->
+                <li class="nav-item dropdown" sec:authorize="hasAnyRole('RECEPTION', 'ADMIN')">
+                    <a class="nav-link dropdown-toggle text-success fw-semibold" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-bell-fill me-1"></i> Reception Desk
+                    </a>
+                    <ul class="dropdown-menu shadow border-0">
+                        <li><a class="dropdown-item" th:href="@{/reception/dashboard}"><i class="bi bi-speedometer2 me-2"></i> Reception Dashboard</a></li>
+                        <li><a class="dropdown-item" th:href="@{/reception/check-in-out}"><i class="bi bi-box-arrow-in-right me-2"></i> Check-in & Check-out</a></li>
+                    </ul>
+                </li>
+
+                <!-- Admin Navigation -->
+                <li class="nav-item dropdown" sec:authorize="hasRole('ADMIN')">
+                    <a class="nav-link dropdown-toggle text-info fw-semibold" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-gear-wide-connected me-1"></i> Administration
+                    </a>
+                    <ul class="dropdown-menu shadow border-0">
+                        <li><a class="dropdown-item" th:href="@{/admin/dashboard}"><i class="bi bi-speedometer me-2"></i> Admin Control Center</a></li>
+                        <li><a class="dropdown-item" th:href="@{/admin/rooms}"><i class="bi bi-door-closed me-2"></i> Manage Rooms</a></li>
+                        <li><a class="dropdown-item" th:href="@{/admin/bookings}"><i class="bi bi-calendar2-range me-2"></i> Manage Bookings</a></li>
+                        <li><a class="dropdown-item" th:href="@{/admin/reports}"><i class="bi bi-graph-up me-2"></i> Analytics & Reports</a></li>
+                    </ul>
                 </li>
             </ul>
-            <ul class="navbar-nav ms-auto">
+
+            <ul class="navbar-nav ms-auto align-items-lg-center">
                 <li class="nav-item" sec:authorize="!isAuthenticated()">
-                    <a class="btn btn-outline-light me-2" th:href="@{/login}">Login</a>
+                    <a class="btn btn-outline-light btn-sm px-3 me-2" th:href="@{/login}"><i class="bi bi-box-arrow-in-right me-1"></i> Sign In</a>
                 </li>
                 <li class="nav-item" sec:authorize="!isAuthenticated()">
-                    <a class="btn btn-warning" th:href="@{/register}">Register</a>
+                    <a class="btn btn-warning btn-sm px-3 fw-semibold" th:href="@{/register}"><i class="bi bi-person-plus me-1"></i> Register</a>
                 </li>
+
+                <!-- Authenticated User Menu -->
                 <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
-                    <a class="nav-link dropdown-toggle text-light" href="#" role="button" data-bs-toggle="dropdown">
-                        <i class="bi bi-person-circle"></i> <span sec:authentication="name">User</span>
+                    <a class="nav-link dropdown-toggle text-light d-flex align-items-center gap-1" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-person-circle fs-5 text-warning"></i>
+                        <span sec:authentication="name" class="fw-semibold">User</span>
+                        <span sec:authorize="hasRole('ADMIN')" class="badge bg-danger ms-1 small">Admin</span>
+                        <span sec:authorize="hasRole('RECEPTION') and !hasRole('ADMIN')" class="badge bg-success ms-1 small">Reception</span>
+                        <span sec:authorize="hasRole('CUSTOMER') and !hasRole('ADMIN') and !hasRole('RECEPTION')" class="badge bg-warning text-dark ms-1 small">Guest</span>
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" th:href="@{/my-bookings}">My Bookings</a></li>
+                    <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                        <li sec:authorize="hasRole('CUSTOMER')">
+                            <a class="dropdown-item" th:href="@{/customer/dashboard}"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" th:href="@{/my-bookings}"><i class="bi bi-briefcase me-2"></i> My Bookings</a>
+                        </li>
+                        <li sec:authorize="hasRole('ADMIN')">
+                            <hr class="dropdown-divider">
+                            <a class="dropdown-item" th:href="@{/admin/dashboard}"><i class="bi bi-shield-lock me-2"></i> Admin Panel</a>
+                        </li>
+                        <li sec:authorize="hasRole('RECEPTION')">
+                            <a class="dropdown-item" th:href="@{/reception/dashboard}"><i class="bi bi-bell me-2"></i> Reception Desk</a>
+                        </li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
-                            <form th:action="@{/logout}" method="post" class="d-inline">
-                                <button type="submit" class="dropdown-item text-danger">Logout</button>
+                            <form th:action="@{/logout}" method="post" class="d-inline w-100">
+                                <button type="submit" class="dropdown-item text-danger d-flex align-items-center">
+                                    <i class="bi bi-box-arrow-right me-2"></i> Sign Out
+                                </button>
                             </form>
                         </li>
                     </ul>

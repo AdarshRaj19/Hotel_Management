@@ -14,29 +14,29 @@
     <div th:replace="~{fragments/navbar :: navbar}"></div>
 
     <div class="container my-5 flex-grow-1">
-        <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
             <div>
-                <h2 class="fw-bold mb-1">Available Rooms</h2>
-                <p class="text-muted mb-0">Find and reserve your ideal stay with real-time availability</p>
+                <h2 class="fw-bold mb-1"><i class="bi bi-door-open-fill text-warning"></i> Explore Hotel Rooms</h2>
+                <p class="text-muted mb-0">Browse luxury rooms, check real-time availability, and reserve effortlessly</p>
             </div>
             <a th:href="@{/rooms}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-clockwise"></i> Reset Filters</a>
         </div>
 
         <!-- Filter Card -->
-        <div class="card shadow-sm border-0 mb-4 p-3 bg-white rounded-3">
-            <form th:action="@{/rooms}" method="get" class="row g-3">
-                <div class="col-md-2">
-                    <label class="form-label small fw-semibold">Check-in</label>
-                    <input type="date" name="checkInDate" th:value="${criteria.checkInDate}" class="form-control form-control-sm">
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label small fw-semibold">Check-out</label>
-                    <input type="date" name="checkOutDate" th:value="${criteria.checkOutDate}" class="form-control form-control-sm">
+        <div class="card shadow-sm border-0 mb-5 p-3 p-md-4 bg-white rounded-4">
+            <form th:action="@{/rooms}" method="get" class="row g-3 align-items-end" id="roomFilterForm">
+                <div class="col-md-3">
+                    <label class="form-label small fw-semibold text-muted mb-1"><i class="bi bi-calendar-check text-primary me-1"></i> Check-in</label>
+                    <input type="date" id="filterCheckIn" name="checkInDate" th:value="${criteria.checkInDate}" class="form-control form-control-sm">
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label small fw-semibold">Room Type</label>
-                    <select name="roomTypeId" class="form-select form-control-sm">
-                        <option value="">All Room Types</option>
+                    <label class="form-label small fw-semibold text-muted mb-1"><i class="bi bi-calendar-x text-primary me-1"></i> Check-out</label>
+                    <input type="date" id="filterCheckOut" name="checkOutDate" th:value="${criteria.checkOutDate}" class="form-control form-control-sm">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label small fw-semibold text-muted mb-1"><i class="bi bi-tag text-primary me-1"></i> Room Type</label>
+                    <select name="roomTypeId" class="form-select form-select-sm">
+                        <option value="">All Room Categories</option>
                         <option th:each="type : ${roomTypes}"
                                 th:value="${type.id}"
                                 th:text="${type.name}"
@@ -44,38 +44,79 @@
                         </option>
                     </select>
                 </div>
-                <div class="col-md-2">
-                    <label class="form-label small fw-semibold">Min Capacity</label>
-                    <input type="number" name="capacity" min="1" max="10" th:value="${criteria.capacity}" placeholder="Guests" class="form-control form-control-sm">
+                <div class="col-md-1">
+                    <label class="form-label small fw-semibold text-muted mb-1"><i class="bi bi-people text-primary me-1"></i> Guests</label>
+                    <input type="number" name="capacity" min="1" max="10" th:value="${criteria.capacity}" placeholder="1" class="form-control form-control-sm">
                 </div>
-                <div class="col-md-3 d-flex align-items-end">
-                    <button type="submit" class="btn btn-primary btn-sm w-100"><i class="bi bi-funnel"></i> Apply Filter</button>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary btn-sm w-100 py-2 fw-semibold">
+                        <i class="bi bi-funnel me-1"></i> Apply Filter
+                    </button>
                 </div>
             </form>
         </div>
 
         <!-- Room Listing Cards -->
         <div class="row g-4" th:if="${not #lists.isEmpty(rooms)}">
-            <div class="col-md-4" th:each="room : ${rooms}">
-                <div class="card h-100 border-0 shadow-sm room-card rounded-3 overflow-hidden">
-                    <div class="card-img-placeholder bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 180px;">
-                        <i class="bi bi-door-open display-3 text-warning"></i>
+            <div class="col-md-6 col-lg-4" th:each="room : ${rooms}">
+                <div class="card h-100 border-0 shadow-sm room-card overflow-hidden bg-white">
+                    
+                    <!-- Dynamic Room Image based on Type -->
+                    <div class="room-image-container">
+                        <img th:if="${#strings.containsIgnoreCase(room.roomType.name, 'Single')}"
+                             src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=800&q=80"
+                             alt="Single Room">
+                        <img th:if="${#strings.containsIgnoreCase(room.roomType.name, 'Double')}"
+                             src="https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=800&q=80"
+                             alt="Double Room">
+                        <img th:if="${#strings.containsIgnoreCase(room.roomType.name, 'Deluxe')}"
+                             src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80"
+                             alt="Deluxe Suite">
+                        <img th:if="${#strings.containsIgnoreCase(room.roomType.name, 'Presidential')}"
+                             src="https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=800&q=80"
+                             alt="Presidential Suite">
+                        <img th:if="${!#strings.containsIgnoreCase(room.roomType.name, 'Single') and !#strings.containsIgnoreCase(room.roomType.name, 'Double') and !#strings.containsIgnoreCase(room.roomType.name, 'Deluxe') and !#strings.containsIgnoreCase(room.roomType.name, 'Presidential')}"
+                             src="https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=800&q=80"
+                             alt="Hotel Room">
+
+                        <div class="room-image-badge">
+                            <span class="badge bg-dark bg-opacity-75 text-warning border border-warning" th:text="${room.roomType.name}">Deluxe</span>
+                        </div>
+                        <div class="room-status-badge">
+                            <span th:class="'badge ' + (${room.status.name() == 'AVAILABLE'} ? 'bg-success' : (${room.status.name() == 'OCCUPIED'} ? 'bg-danger' : 'bg-warning text-dark'))"
+                                  th:text="${room.status}">AVAILABLE</span>
+                        </div>
                     </div>
-                    <div class="card-body d-flex flex-column">
-                        <div class="d-flex justify-content-between align-items-start mb-2">
-                            <span class="badge bg-primary-subtle text-primary fw-bold" th:text="${room.roomType.name}">Deluxe</span>
-                            <span class="badge bg-success-subtle text-success" th:text="${room.status}">AVAILABLE</span>
+
+                    <div class="card-body d-flex flex-column p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <h5 class="card-title fw-bold text-dark mb-0" th:text="'Room #' + ${room.roomNumber}">Room #101</h5>
+                            <span class="text-muted small"><i class="bi bi-people-fill text-primary"></i> <span th:text="${room.capacity}">2</span> Guests</span>
                         </div>
-                        <h5 class="card-title fw-bold" th:text="'Room #' + ${room.roomNumber}">Room #101</h5>
-                        <p class="card-text text-muted small flex-grow-1" th:text="${room.description}">Spacious room with modern amenities.</p>
-                        <hr class="my-2 text-muted">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <span class="small text-muted"><i class="bi bi-people-fill text-secondary"></i> Up to <span th:text="${room.capacity}">2</span> guests</span>
-                            <span class="h5 fw-bold text-dark mb-0">&#8377;<span th:text="${#numbers.formatDecimal(room.pricePerNight, 0, 'COMMA', 2, 'POINT')}">2,500</span> <small class="text-muted fs-6">/night</small></span>
+
+                        <p class="card-text text-muted small flex-grow-1 mt-2 mb-3" th:text="${room.description}">
+                            Spacious room with modern amenities, ensuite bath, and luxury bed.
+                        </p>
+
+                        <div class="border-top pt-3 d-flex justify-content-between align-items-baseline mb-3">
+                            <span class="text-muted small">Tariff:</span>
+                            <div>
+                                <span class="h4 fw-bold text-dark mb-0">&#8377;<span th:text="${#numbers.formatDecimal(room.pricePerNight, 0, 'COMMA', 2, 'POINT')}">2,500</span></span>
+                                <small class="text-muted">/night</small>
+                            </div>
                         </div>
-                        <div class="d-grid gap-2">
-                            <a th:href="@{'/rooms/' + ${room.id}}" class="btn btn-outline-dark btn-sm">View Details</a>
-                            <a th:href="@{'/booking/new?roomId=' + ${room.id}}" class="btn btn-warning btn-sm fw-semibold">Book Now</a>
+
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <a th:href="@{'/rooms/' + ${room.id}}" class="btn btn-outline-dark btn-sm w-100 py-2">
+                                    <i class="bi bi-info-circle me-1"></i> Details
+                                </a>
+                            </div>
+                            <div class="col-6">
+                                <a th:href="@{'/booking/new?roomId=' + ${room.id}}" class="btn btn-warning btn-sm w-100 py-2 fw-semibold">
+                                    <i class="bi bi-calendar-check me-1"></i> Book Now
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -84,10 +125,10 @@
 
         <!-- Empty State -->
         <div class="text-center py-5" th:if="${#lists.isEmpty(rooms)}">
-            <i class="bi bi-calendar-x display-1 text-secondary mb-3"></i>
+            <div class="display-3 text-secondary mb-3"><i class="bi bi-calendar-x"></i></div>
             <h4 class="fw-bold">No Rooms Match Your Criteria</h4>
-            <p class="text-muted">Try adjusting your dates, room type, or capacity filters.</p>
-            <a th:href="@{/rooms}" class="btn btn-primary mt-2">View All Available Rooms</a>
+            <p class="text-muted">Try adjusting your dates, room type, or minimum capacity filters.</p>
+            <a th:href="@{/rooms}" class="btn btn-primary px-4 py-2 mt-2">View All Available Rooms</a>
         </div>
     </div>
 
@@ -95,5 +136,28 @@
     <div th:replace="~{fragments/footer :: footer}"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Set dynamic date picker minimum to today
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            const checkInInput = document.getElementById('filterCheckIn');
+            const checkOutInput = document.getElementById('filterCheckOut');
+
+            if (checkInInput) {
+                checkInInput.min = today;
+                checkInInput.addEventListener('change', function() {
+                    if (this.value) {
+                        const nextDay = new Date(this.value);
+                        nextDay.setDate(nextDay.getDate() + 1);
+                        const nextDayStr = nextDay.toISOString().split('T')[0];
+                        checkOutInput.min = nextDayStr;
+                        if (checkOutInput.value && checkOutInput.value <= this.value) {
+                            checkOutInput.value = nextDayStr;
+                        }
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

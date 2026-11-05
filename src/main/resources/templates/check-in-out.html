@@ -14,49 +14,50 @@
     <div th:replace="~{fragments/navbar :: navbar}"></div>
 
     <div class="container my-5 flex-grow-1">
-        <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
             <div>
                 <h2 class="fw-bold mb-1"><i class="bi bi-box-arrow-in-right text-warning"></i> Front Desk Check-in & Check-out</h2>
                 <p class="text-muted mb-0">Search reservations, process guest arrivals, departures, and generate stay invoices</p>
             </div>
-            <a th:href="@{/reception/dashboard}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Reception Dashboard</a>
+            <a th:href="@{/reception/dashboard}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i> Reception Dashboard</a>
         </div>
 
-        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
             <i class="bi bi-check-circle-fill me-2"></i> <span th:text="${successMessage}"></span>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
             <i class="bi bi-exclamation-triangle-fill me-2"></i> <span th:text="${errorMessage}"></span>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
 
         <!-- Live Waiting Queue (Custom Circular Queue) -->
         <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white">
-            <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
                 <div>
-                    <h5 class="fw-bold mb-0 text-primary">
-                        <i class="bi bi-people-fill text-warning"></i> Front Desk Check-in Queue
+                    <h5 class="fw-bold mb-0 text-dark">
+                        <i class="bi bi-people-fill text-warning me-1"></i> Front Desk Check-in Queue
                         <span class="badge bg-primary ms-2" th:text="${queueSize} + ' Waiting'">0 Waiting</span>
                     </h5>
-                    <small class="text-muted">Powered by custom FIFO <code>CustomCircularQueue</code></small>
+                    <small class="text-muted">Powered by high-efficiency FIFO <code>CustomCircularQueue&lt;Booking&gt;</code></small>
                 </div>
                 <form th:if="${queueSize > 0}" th:action="@{/reception/queue/serve}" method="post" class="d-inline">
-                    <button type="submit" class="btn btn-success fw-semibold">
-                        <i class="bi bi-person-check-fill"></i> Serve & Check-in Next Guest
+                    <button type="submit" class="btn btn-success fw-bold shadow-sm">
+                        <i class="bi bi-person-check-fill me-1"></i> Serve & Check-in Next Guest
                     </button>
                 </form>
             </div>
 
-            <div th:if="${queueSize == 0}" class="text-center py-3 text-muted small bg-light rounded-3">
-                <i class="bi bi-check-circle text-success me-1"></i> No guests currently waiting in the check-in queue.
+            <div th:if="${queueSize == 0}" class="text-center py-4 text-muted small bg-light rounded-3">
+                <i class="bi bi-check-circle-fill text-success fs-4 d-block mb-1"></i>
+                No guests currently waiting in the check-in queue. Use <strong>Enqueue</strong> from the list below.
             </div>
 
             <div th:if="${queueSize > 0}" class="table-responsive">
                 <table class="table table-sm table-bordered align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>Position</th>
+                            <th class="ps-2">Queue Position</th>
                             <th>Booking #</th>
                             <th>Guest Name</th>
                             <th>Room</th>
@@ -65,15 +66,15 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:each="guest, iter : ${waitingQueue}" th:class="${iter.index == 0} ? 'table-warning' : ''">
-                            <td>
-                                <span class="badge" th:classappend="${iter.index == 0} ? 'bg-danger' : 'bg-secondary'"
+                        <tr th:each="guest, iter : ${waitingQueue}" th:class="${iter.index == 0} ? 'table-warning fw-semibold' : ''">
+                            <td class="ps-2">
+                                <span class="badge" th:classappend="${iter.index == 0} ? 'bg-danger pulse-badge' : 'bg-secondary'"
                                       th:text="${iter.index == 0} ? 'NEXT IN LINE' : '#' + (${iter.index} + 1)">#1</span>
                             </td>
                             <td class="fw-bold" th:text="'#' + ${guest.id}">#1</td>
                             <td th:text="${guest.user.fullName}">Guest</td>
                             <td th:text="'Room ' + ${guest.room.roomNumber}">Room 101</td>
-                            <td th:text="${guest.numberOfGuests}">2</td>
+                            <td><i class="bi bi-people-fill text-muted me-1"></i> <span th:text="${guest.numberOfGuests}">2</span></td>
                             <td><span class="badge bg-primary" th:text="${guest.bookingStatus}">CONFIRMED</span></td>
                         </tr>
                     </tbody>
@@ -86,31 +87,31 @@
             <form th:action="@{/reception/check-in-out}" method="get" class="row g-2 align-items-center">
                 <div class="col-md-9">
                     <div class="input-group">
-                        <span class="input-group-text bg-white"><i class="bi bi-search text-muted"></i></span>
-                        <input type="text" name="search" th:value="${search}" placeholder="Search by booking #, guest name, or room number..." class="form-control">
+                        <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                        <input type="text" name="search" th:value="${search}" placeholder="Search by booking #, guest name, or room number..." class="form-control border-start-0">
                     </div>
                 </div>
                 <div class="col-md-3 d-flex gap-2">
-                    <button type="submit" class="btn btn-primary w-100"><i class="bi bi-filter"></i> Search</button>
-                    <a th:href="@{/reception/check-in-out}" class="btn btn-outline-secondary"><i class="bi bi-arrow-clockwise"></i></a>
+                    <button type="submit" class="btn btn-primary w-100 fw-semibold"><i class="bi bi-filter me-1"></i> Search</button>
+                    <a th:href="@{/reception/check-in-out}" class="btn btn-outline-secondary" title="Reset Search"><i class="bi bi-arrow-clockwise"></i></a>
                 </div>
             </form>
         </div>
 
         <!-- Bookings Master Table -->
-        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-dark">
                             <tr>
-                                <th>Booking #</th>
+                                <th class="ps-3">Booking #</th>
                                 <th>Guest Details</th>
                                 <th>Room</th>
                                 <th>Dates</th>
                                 <th>Tariff</th>
                                 <th>Status</th>
-                                <th class="text-end">Front Desk Actions</th>
+                                <th class="text-end pe-3">Front Desk Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -118,24 +119,24 @@
                                 <td colspan="7" class="text-center py-5 text-muted">No reservations found.</td>
                             </tr>
                             <tr th:each="b : ${bookings}">
-                                <td class="fw-bold" th:text="'#' + ${b.id}">#1</td>
+                                <td class="fw-bold ps-3" th:text="'#' + ${b.id}">#1</td>
                                 <td>
-                                    <strong th:text="${b.user.fullName}">Guest Name</strong>
+                                    <strong class="text-dark" th:text="${b.user.fullName}">Guest Name</strong>
                                     <small class="text-muted d-block" th:text="${b.user.email}">email</small>
                                 </td>
                                 <td>
-                                    <strong th:text="'Room ' + ${b.room.roomNumber}">Room 101</strong>
+                                    <strong class="text-dark" th:text="'Room ' + ${b.room.roomNumber}">Room 101</strong>
                                     <small class="text-muted d-block" th:text="${b.room.roomType.name}">Deluxe</small>
                                 </td>
                                 <td>
                                     <span th:text="${b.checkInDate}">2026-11-05</span> to <span th:text="${b.checkOutDate}">2026-11-08</span>
                                 </td>
-                                <td>&#8377;<span th:text="${#numbers.formatDecimal(b.totalAmount, 0, 'COMMA', 2, 'POINT')}">5,000</span></td>
+                                <td class="fw-bold text-dark">&#8377;<span th:text="${#numbers.formatDecimal(b.totalAmount, 0, 'COMMA', 2, 'POINT')}">5,000</span></td>
                                 <td>
                                     <span th:class="'badge ' + (${b.bookingStatus.name() == 'CONFIRMED'} ? 'bg-primary' : (${b.bookingStatus.name() == 'CHECKED_IN'} ? 'bg-warning text-dark' : (${b.bookingStatus.name() == 'CHECKED_OUT'} ? 'bg-success' : 'bg-danger')))"
                                           th:text="${b.bookingStatus}">CONFIRMED</span>
                                 </td>
-                                <td class="text-end">
+                                <td class="text-end pe-3">
                                     <!-- Action: Enqueue into Waiting Queue -->
                                     <form th:if="${b.bookingStatus.name() == 'CONFIRMED'}"
                                           th:action="@{'/reception/queue/enqueue/' + ${b.id}}" method="post" class="d-inline">
@@ -147,7 +148,7 @@
                                     <!-- Action: Direct Check in -->
                                     <form th:if="${b.bookingStatus.name() == 'CONFIRMED'}"
                                           th:action="@{'/reception/check-in/' + ${b.id}}" method="post" class="d-inline">
-                                        <button type="submit" class="btn btn-success btn-sm">
+                                        <button type="submit" class="btn btn-success btn-sm me-1" title="Direct Check-in">
                                             <i class="bi bi-box-arrow-in-right"></i> Check-in
                                         </button>
                                     </form>
@@ -155,14 +156,14 @@
                                     <!-- Action: Check out -->
                                     <form th:if="${b.bookingStatus.name() == 'CHECKED_IN'}"
                                           th:action="@{'/reception/check-out/' + ${b.id}}" method="post" class="d-inline">
-                                        <button type="submit" class="btn btn-warning btn-sm fw-semibold">
+                                        <button type="submit" class="btn btn-warning btn-sm fw-semibold me-1" title="Check-out Guest">
                                             <i class="bi bi-box-arrow-right"></i> Check-out & Settle
                                         </button>
                                     </form>
 
                                     <!-- Action: View Bill / Invoice -->
                                     <a th:if="${b.bookingStatus.name() == 'CHECKED_OUT' or b.bookingStatus.name() == 'CHECKED_IN'}"
-                                       th:href="@{'/reception/bill/' + ${b.id}}" class="btn btn-outline-info btn-sm">
+                                       th:href="@{'/reception/bill/' + ${b.id}}" class="btn btn-outline-info btn-sm" title="View Tax Invoice">
                                         <i class="bi bi-receipt"></i> Invoice
                                     </a>
                                 </td>
